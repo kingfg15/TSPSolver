@@ -1,0 +1,16 @@
+Nearist Neighbor runs.
+A,G,H,K,F,L,B,C,J,D,E,I,M,A  Cost = 191
+B,A,G,H,K,F,L,C,J,D,E,I,M,B  Cost = 210
+C,J,G,H,K,F,L,B,A,E,D,I,M,C  Cost = 190
+D,G,H,K,F,L,B,A,E,C,J,I,M,D  Cost = 165
+E,A,G,H,K,F,L,B,C,J,D,I,M,E  Cost = 175
+F,L,H,G,I,J,C,B,A,E,D,M,K,F  Cost = 176
+G,H,K,F,L,B,A,E,C,J,D,I,M,G  Cost = 157
+H,G,I,J,C,B,A,E,F,L,D,M,K,H  Cost = 184
+I,G,H,K,F,L,B,A,E,C,J,D,M,I  Cost = 157
+J,C,G,H,K,F,L,B,A,E,D,I,M,J  Cost = 182
+K,H,G,I,J,C,B,A,E,F,L,D,M,K  Cost = 184
+L,F,H,G,I,J,C,B,A,E,D,M,K,L  Cost = 207
+M,F,L,H,G,I,J,C,B,A,E,D,K,M  Cost = 184
+Exact solution is:
+A,E,C,J,D,H,K,I,G,M,F,L,B,A  Cost = 130

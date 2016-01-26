@@ -1,0 +1,9 @@
+Nearist Neighbor runs.
+A,E,D,C,F,B,A  Cost = 40
+B,A,E,D,C,F,B  Cost = 40
+C,D,E,A,B,F,C  Cost = 40
+D,C,E,A,B,F,D  Cost = 44
+E,A,D,C,F,B,E  Cost = 43
+F,C,D,E,A,B,F  Cost = 40
+Exact solution is:
+A,B,D,C,F,E,A  Cost = 37
