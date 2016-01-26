@@ -3,11 +3,11 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class TSPSolver2 {
+public class TSPSolver {
 	static int[] currentPermute;
 
 	public static void main(String[] args) throws FileNotFoundException {
-		TSPSolver2 tsp = new TSPSolver2();
+		TSPSolver tsp = new TSPSolver();
 		NearestNeighbor2 nnSolver = new NearestNeighbor2();
 		String matrixString = tsp.fileReadIn();
 		int[][] matrix = tsp.StringToIntMatrix(matrixString);
