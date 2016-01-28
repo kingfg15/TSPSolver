@@ -5,85 +5,14 @@ import java.util.Scanner;
 
 public class TSPSolver {
 	static int[] currentPermute;
-	static int[] roses;
-	static int bouquet;
-	static int[][] matrix;
-	static int lowEstimate;
-	static int rose;
 
 	public static void main(String[] args) throws FileNotFoundException {
-		System.out.println("Start time: "+System.currentTimeMillis());
 		TSPSolver tsp = new TSPSolver();
 		NearestNeighbor2 nnSolver = new NearestNeighbor2();
 		String matrixString = tsp.fileReadIn();
-		matrix = tsp.StringToIntMatrix(matrixString);
-		lowEstimate = nnSolver.oldNearestNeighborRun(matrix);
-		long possiblePermutes = (factorial(matrix.length - 1)/2);
-		currentPermute = new int[matrix[0].length];
-		
-		roses = tsp.roseColoredPath(matrix);
-		bouquet = 0;
-		
-		for (int petal : roses){
-			bouquet += petal;
-		}
-		
-		rose = bouquet;
-		
-		System.out.println("Rose colored glasses path = " + bouquet);
-		
-		for(int i = 0; i < currentPermute.length; i++){
-			currentPermute[i] = i;
-		}
-		
-		int[] bestArray = currentPermute.clone();
-		int bestValue = Integer.MAX_VALUE;
-		int currentValue = 0;
-		
-		if ((rose + lowEstimate)/2 < lowEstimate - rose){
-			for (long i = 0; i < possiblePermutes; i++) {
-				
-				currentValue = tsp.getPermuteValueRose();
-				if(currentValue <= bestValue){
-					bestArray = currentPermute.clone();
-					bestValue = currentValue;
-					lowEstimate = bestValue;
-				}
-				rose = bouquet;
-		//		System.out.print(printArray(currentPermute));		
-		//		System.out.println("\tDistance:\t" + currentValue);
-				currentPermute = tsp.getLexes(currentPermute);
-			}
-		} else{
-		
-			for (long i = 0; i < possiblePermutes; i++) {
-				
-				currentValue = tsp.getPermuteValue();
-				if(currentValue <= bestValue){
-					bestArray = currentPermute.clone();
-					bestValue = currentValue;
-					lowEstimate = bestValue;
-				}
-		//		System.out.print(printArray(currentPermute));		
-		//		System.out.println("\tDistance:\t" + currentValue);
-				currentPermute = tsp.getLexes(currentPermute);
-			}
-		}
-		
-		System.out.println("Best path:\t" + tsp.MatrixLineToString(bestArray) + "\tBest Distance:\t" + bestValue);
-		System.out.println("Last path:\t" + tsp.MatrixLineToString(currentPermute) + "\tLast Distance:\t" + currentValue);
-		System.out.println("Stop time: "+System.currentTimeMillis());
-
-
-	}
-	
-
-	/*
-	public void TSPRun() throws FileNotFoundException{
-		TSPSolver2 tsp = new TSPSolver2();
-		String matrixString = tsp.fileReadIn();
 		int[][] matrix = tsp.StringToIntMatrix(matrixString);
-		long possiblePermutes = (factorial(matrix.length) - 1 ) /2;
+		int lowEstimate = nnSolver.oldNearestNeighborRun(matrix);
+		long possiblePermutes = (factorial(matrix.length - 1)/2);
 		currentPermute = new int[matrix[0].length];
 		for(int i = 0; i < currentPermute.length; i++){
 			currentPermute[i] = i;
@@ -94,63 +23,37 @@ public class TSPSolver {
 		
 		
 		for (long i = 0; i < possiblePermutes; i++) {
-			currentValue = tsp.getPermuteValue(currentPermute, matrix);
+			currentValue = tsp.getPermuteValue(currentPermute, matrix, lowEstimate);
 			if(currentValue <= bestValue){
 				bestArray = currentPermute.clone();
 				bestValue = currentValue;
+				lowEstimate = bestValue;
 			}
-			System.out.print(printArray(currentPermute));
-			
-			System.out.println("\tDistance:\t" + tsp.getPermuteValue(currentPermute, matrix));
+	//		System.out.print(printArray(currentPermute));		
+	//		System.out.println("\tDistance:\t" + currentValue);
 			currentPermute = tsp.getLexes(currentPermute);
 		}
 		
-		System.out.println("Best path: " + printArray(bestArray) + "\tBest Distance:\t" + bestValue);		
+		System.out.println("Best path:\t" + tsp.MatrixLineToString(bestArray) + "\tBest Distance:\t" + bestValue);
 		
 	}
-	*/
 	
 	
 	/*
 	 * The getPermuteValue will look at a permutation and return it's value.
 	 */	
-	public int getPermuteValue(){
+	public int getPermuteValue(int[] permute, int[][] matrix, int lowEstimate){
 		int num = 0;
 		
-		for(int i = 0; i < currentPermute.length - 1; i++){
-			num += matrix[currentPermute[i]][currentPermute[i+1]];
+		for(int i = 0; i < permute.length - 1; i++){
+			num += matrix[permute[i]][permute[i+1]];
 			if(num > lowEstimate){
 				insertionSort(currentPermute, i);
 				return num;
 			}
 		}
 		
-		num += matrix[currentPermute[currentPermute.length-1]][currentPermute[0]];
-		
-		return num;
-	}
-	
-	/*
-	 * The getPermuteValue will look at a permutation and return it's value, and increases branch and bound performance.
-	 * Naturally, the rose references are intended to reflect the mind-bogglingly optimistic path length estimates that
-	 * produced those variables.
-	 * 
-	 * After testing, this method does not increase running speed.  It actually causes it to take significantly longer.
-	 * Further improvements will only be in code optimization, rather than algorithm optimization assuming Java.
-	 */	
-	public int getPermuteValueRose(){
-		int num = 0;
-		
-		for(int i = 0; i < currentPermute.length - 1; i++){
-			num += matrix[currentPermute[i]][currentPermute[i+1]];
-			rose -= roses[currentPermute[i]];
-			if((num + rose) > lowEstimate){
-				insertionSort(currentPermute, i);
-				return num + rose;
-			}
-		}
-		
-		num += matrix[currentPermute[currentPermute.length-1]][currentPermute[0]];
+		num += matrix[permute[permute.length-1]][permute[0]];
 		
 		return num;
 	}
@@ -203,26 +106,6 @@ public class TSPSolver {
 
 		return matrix;
 	}
-	
-	public int[] roseColoredPath(int[][] findCheap){
-		int[] rosey = new int[findCheap.length];
-		int index = 0;
-		int cheapest;
-		
-		for (int[] origin : findCheap){
-			cheapest = Integer.MAX_VALUE;
-			for (int cig : origin){
-				if (cig < cheapest){
-					cheapest = cig;
-				}
-			}
-			rosey[index] = cheapest;
-			index++;
-		}
-		
-		
-		return rosey;
-	}
 
 	/*
 	 * The fileReadIn method asks for the file that the user wants to use as
@@ -265,7 +148,7 @@ public class TSPSolver {
 	}
 
 	/*
-	 * The follwoing methods are copied from the LexPermsOriginal and modified
+	 * The following methods are copied from the LexPermsOriginal and modified
 	 * for use in this class. print, swap and next_permute also appear in
 	 * LexPermsOriginal in different forms. Check the class LexPermsOriginal if
 	 * you need to see their original code.
@@ -335,7 +218,6 @@ public class TSPSolver {
 	{
 		int out, in;
 		position++;
-
 		for(out=a.length-1; out>position; out--)
 			for(in=position; in<out; in++)
 				if(/*a[in] > a[in+1] && direction.equalsIgnoreCase("A") || */a[in] < a[in+1]/* && direction.equalsIgnoreCase("D")*/)
