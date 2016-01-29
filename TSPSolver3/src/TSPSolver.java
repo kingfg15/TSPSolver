@@ -2,10 +2,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class TSPSolver {
 	static int[] currentPermute;
 	static long time;
+	static long runTime;
 
 	public static void main(String[] args) throws FileNotFoundException {
 		TSPSolver tsp = new TSPSolver();
@@ -24,7 +26,7 @@ public class TSPSolver {
 		int bestValue = Integer.MAX_VALUE;
 		int currentValue = 0;
 		
-		
+		//this loop contains parts that must be adapted for multi-threading.  Java memory model has some nasty quirks here with statics.
 		for (long i = 0; i < possiblePermutes; i++) {
 			currentValue = tsp.getPermuteValue(currentPermute, matrix, lowEstimate);
 			if(currentValue <= bestValue){
@@ -36,7 +38,18 @@ public class TSPSolver {
 	//		System.out.println("\tDistance:\t" + currentValue);
 			currentPermute = tsp.getLexes(currentPermute);
 		}
-		System.out.println("Run time in milliseconds: "+ (System.currentTimeMillis() - time));
+		
+		
+		runTime = (System.currentTimeMillis() - time);
+		
+		System.out.println("Run time in milliseconds: "+ runTime);
+		
+		//hh:mm:ss Example conversion found at http://stackoverflow.com/questions/9027317/how-to-convert-milliseconds-to-hhmmss-format
+		System.out.print("hh:mm:ss = ");
+		System.out.println(String.format("%02d:%02d:%02d", 
+		    TimeUnit.MILLISECONDS.toHours(runTime),
+		    TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
+		    TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))));
 		
 		System.out.println("Best path:\t" + tsp.MatrixLineToString(bestArray) + "\tBest Distance:\t" + bestValue);
 		
